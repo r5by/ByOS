@@ -1,0 +1,10 @@
+## Folder ignore
+/libs
+/res
+/assets
+/.settings
+
+## File ignore
+*.png
+.classpath
+.DS_Store
