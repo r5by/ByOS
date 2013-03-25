@@ -21,7 +21,8 @@ import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.debug.Debug;
 
-import android.app.Activity;
+import edu.uta.byos.GameActivity;
+
 
 
 public class ResourceManager {
@@ -38,15 +39,20 @@ public class ResourceManager {
     public float cameraHeight;
 
     public Engine engine;
-    public Activity activity;
+    public GameActivity activity;
     public VertexBufferObjectManager vbom;
     private String mPreviousAssetBasePath = "";
 
     // ======================== Game Resources ================= //
-    public static ITextureRegion tableauTextureRegion;
+    public static ITextureRegion tableauTR;
+    public static ITextureRegion mCardGroundTR;
+    public static ITextureRegion mCardBackTR;
+
+    /* For test use */
+    public static ITextureRegion mFaceTR;
 
     // ======================== Menu Resources ================= //
-    public static ITextureRegion menuBackgroundTextureRegion;
+    public static ITextureRegion menuBackgroundTR;
     public static ITiledTextureRegion newgameTiledTextureRegion;
     public static ITiledTextureRegion exitTiledTextureRegion;
     public static ITiledTextureRegion optionsTiledTextureRegion;
@@ -54,7 +60,7 @@ public class ResourceManager {
     public static ITiledTextureRegion dealTiledTextureRegion;
 
     // =================== Shared Game and Menu Resources ====== //
-    public static ITextureRegion splashTextureRegion;
+//    public static ITextureRegion splashTextureRegion;
 
     // -------------------------------
     // Constructors
@@ -80,7 +86,7 @@ public class ResourceManager {
      * @param pVbom
      * Set up gameManager at the beginning of the game
      */
-    public static void setup(final Engine pEngine, final Activity pActivity, final float pCameraWidth, final float pCameraHeight, final VertexBufferObjectManager pVbom){
+    public static void setup(final Engine pEngine, final GameActivity pActivity, final float pCameraWidth, final float pCameraHeight, final VertexBufferObjectManager pVbom){
         getInstance().engine = pEngine;
         getInstance().activity = pActivity;
         getInstance().cameraWidth = pCameraWidth;
@@ -89,9 +95,9 @@ public class ResourceManager {
     }
 
     //Loads splash resources
-    public static void loadSplashResources() {
-        getInstance().loadSharedTextures();
-    }
+//    public static void loadSplashResources() {
+//        getInstance().loadSharedTextures();
+//    }
 
     // Loads all game resources.
     public static void loadGameResources() {
@@ -107,9 +113,9 @@ public class ResourceManager {
     }
 
     // Unloads all splash resources
-    public static void unloadSplashResources() {
-        getInstance().unloadSharedTextures();
-    }
+//    public static void unloadSplashResources() {
+//        getInstance().unloadSharedTextures();
+//    }
 
     // Unloads all game resources.
     public static void unloadGameResources() {
@@ -140,15 +146,14 @@ public class ResourceManager {
 
     // ============================ LOAD TEXTURES (MENU) ================= //
     private void loadMenuTextures(){
-        // Store the current asset base path to apply it after we've loaded our textures
+
         mPreviousAssetBasePath = BitmapTextureAtlasTextureRegionFactory.getAssetBasePath();
-        // Set our menu assets folder to "assets/gfx/menu/"
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
 
-        // background texture:
-        if(menuBackgroundTextureRegion==null) {
+        /* background texture */
+        if(menuBackgroundTR==null) {
             BuildableBitmapTextureAtlas texture = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 359, 283, TextureOptions.BILINEAR);
-            menuBackgroundTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(texture, activity, "menu_background.png");
+            menuBackgroundTR = BitmapTextureAtlasTextureRegionFactory.createFromAsset(texture, activity, "menu_background.png");
             try {
                 texture.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 4));
                 texture.load();
@@ -222,19 +227,17 @@ public class ResourceManager {
             }
         }
 
-
-
-
         // Revert the Asset Path.
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath(mPreviousAssetBasePath);
     }
+
     // ============================ UNLOAD TEXTURES (MENU) =============== //
     private void unloadMenuTextures(){
         // background texture:
-        if(menuBackgroundTextureRegion!=null) {
-            if(menuBackgroundTextureRegion.getTexture().isLoadedToHardware()) {
-                menuBackgroundTextureRegion.getTexture().unload();
-                menuBackgroundTextureRegion = null;
+        if(menuBackgroundTR!=null) {
+            if(menuBackgroundTR.getTexture().isLoadedToHardware()) {
+                menuBackgroundTR.getTexture().unload();
+                menuBackgroundTR = null;
             }
         }
 
@@ -277,15 +280,14 @@ public class ResourceManager {
 
     // ============================ LOAD TEXTURES (GAME) ================= //
     private void loadGameTextures(){
-        // Store the current asset base path to apply it after we've loaded our textures
+
         mPreviousAssetBasePath = BitmapTextureAtlasTextureRegionFactory.getAssetBasePath();
-        // Set our game assets folder to "assets/gfx/game/"
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
 
-        // background texture - only load it if we need to:
-        if(tableauTextureRegion==null) {
+        /* background texture - only load it if we need to */
+        if(tableauTR==null) {
             BuildableBitmapTextureAtlas tableauT = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 490, 330);
-            tableauTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tableauT, activity, "background.png");
+            tableauTR = BitmapTextureAtlasTextureRegionFactory.createFromAsset(tableauT, activity, "background.png");
             try {
                 tableauT.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 4));
                 tableauT.load();
@@ -294,54 +296,71 @@ public class ResourceManager {
             }
         }
 
+        /* Fly face texture, used for TEST-ONLY Purpose */
+		BitmapTextureAtlas mBitmapTextureAtlas = new BitmapTextureAtlas(engine.getTextureManager(), 64, 64, TextureOptions.BILINEAR);
+        mFaceTR = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, activity, "face_box_menu.png", 0, 0);
+        mBitmapTextureAtlas.load();
+
+        /* Load cards ground textures */
+        BitmapTextureAtlas cardGroundTA = new BitmapTextureAtlas(engine.getTextureManager(), 1024, 512, TextureOptions.BILINEAR);
+        mCardGroundTR = BitmapTextureAtlasTextureRegionFactory.createFromAsset(cardGroundTA, activity, "card854.png", 0, 0);
+        cardGroundTA.load();
+
+        /* Load card back texture */
+        BitmapTextureAtlas cardBackTA = new BitmapTextureAtlas(engine.getTextureManager(), 60, 82, TextureOptions.BILINEAR);
+        mCardBackTR = BitmapTextureAtlasTextureRegionFactory.createFromAsset(cardBackTA, activity, "card_background.png", 0, 0);
+        cardBackTA.load();
+
         // Revert the Asset Path.
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath(mPreviousAssetBasePath);
     }
     // ============================ UNLOAD TEXTURES (GAME) =============== //
     private void unloadGameTextures(){
         // background texture - only unload it if it is loaded:
-        if(tableauTextureRegion!=null) {
-            if(tableauTextureRegion.getTexture().isLoadedToHardware()) {
-                tableauTextureRegion.getTexture().unload();
-                tableauTextureRegion = null;
+        if(tableauTR!=null) {
+            if(tableauTR.getTexture().isLoadedToHardware()) {
+                tableauTR.getTexture().unload();
+                tableauTR = null;
             }
         }
     }
+    
+    //TODO: unload cardgroundTR and cardBackTR 
 
     // ============================ LOAD TEXTURES (SHARED) ================= //
-    private void loadSharedTextures(){
+//    private void loadSharedTextures(){
         // Store the current asset base path to apply it after we've loaded our textures
-        mPreviousAssetBasePath = BitmapTextureAtlasTextureRegionFactory.getAssetBasePath();
+//        mPreviousAssetBasePath = BitmapTextureAtlasTextureRegionFactory.getAssetBasePath();
         // Set our shared assets folder to "assets/gfx/"
-        BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
+//        BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
 
         /* Splash texture */
-        if(splashTextureRegion==null) {
-            BuildableBitmapTextureAtlas splashTextureAtlas = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 74, 74,
-                    TextureOptions.BILINEAR);
-            splashTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(splashTextureAtlas, activity, "splash.png");
-            try {
-                splashTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 4));
-                splashTextureAtlas.load();
-            } catch (TextureAtlasBuilderException e) {
-                Debug.e(e);
-            }
-        }
+//        if(splashTextureRegion==null) {
+//            BuildableBitmapTextureAtlas splashTextureAtlas = new BuildableBitmapTextureAtlas(engine.getTextureManager(), 74, 74,
+//                    TextureOptions.BILINEAR);
+//            splashTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(splashTextureAtlas, activity, "splash.png");
+//            try {
+//                splashTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 4));
+//                splashTextureAtlas.load();
+//            } catch (TextureAtlasBuilderException e) {
+//                Debug.e(e);
+//            }
+//        }
 
         // Revert the Asset Path.
-        BitmapTextureAtlasTextureRegionFactory.setAssetBasePath(mPreviousAssetBasePath);
-    }
+//        BitmapTextureAtlasTextureRegionFactory.setAssetBasePath(mPreviousAssetBasePath);
+//    }
     // ============================ UNLOAD TEXTURES (SHARED) ============= //
-    private void unloadSharedTextures(){
-        /* splash texture */
-        if(splashTextureRegion!=null) {
-            if(splashTextureRegion.getTexture().isLoadedToHardware()) {
-                splashTextureRegion.getTexture().unload();
-                splashTextureRegion = null;
-            }
-        }
-
-    }
+//    private void unloadSharedTextures(){
+//        /* splash texture */
+//        if(splashTextureRegion!=null) {
+//            if(splashTextureRegion.getTexture().isLoadedToHardware()) {
+//                splashTextureRegion.getTexture().unload();
+//                splashTextureRegion = null;
+//            }
+//        }
+//
+//    }
 
     // ============================ LOAD TEXTURES (SPLASH) ================= //
 

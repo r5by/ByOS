@@ -1,12 +1,15 @@
 package edu.uta.byos.Managers;
 
 import org.andengine.engine.Engine;
+import org.andengine.entity.scene.Scene;
 import org.andengine.ui.IGameInterface.OnCreateSceneCallback;
 
-import edu.uta.byos.MainMenuScene;
+import edu.uta.byos.GameMenu;
 import edu.uta.byos.ManagedScene;
-import edu.uta.byos.SplashScene;
 import edu.uta.byos.TableauScene;
+//import edu.uta.byos.MainMenuScene;
+//import edu.uta.byos.MainMenuScene;
+//import edu.uta.byos.SplashScene;
 /**
 * ********** [ ByOS ] ***********
 * @Description A solitaire game
@@ -20,7 +23,7 @@ import edu.uta.byos.TableauScene;
 * ***************************************
 */
 
-public class SceneManager {
+public class SceneManager extends Object {
 
     // -------------------------------
     // Constants
@@ -32,16 +35,17 @@ public class SceneManager {
     // -------------------------------
     private SceneManager() {
     }
-
+ 	
     // -------------------------------
     // Scenes
     // -------------------------------
     private ManagedScene splashScene;
-    private ManagedScene menuScene;
+    private GameMenu menuScene;
     private ManagedScene gameScene;
     private ManagedScene loadingScene;
 
-    private ManagedScene currentScene;
+//    private ManagedScene currentScene;
+    private Scene currentScene;
 
     // -------------------------------
     // Fields
@@ -53,7 +57,7 @@ public class SceneManager {
         SCENE_LOADING,
     }
 
-    private SceneType currentSceneType = SceneType.SCENE_SPLASH;
+    private SceneType currentSceneType = SceneType.SCENE_GAME;
     private Engine mEngine = ResourceManager.getInstance().engine;
 
     // -------------------------------
@@ -68,8 +72,11 @@ public class SceneManager {
         return currentSceneType;
     }
 
-    public ManagedScene getCurrentScene() {
-        return currentScene;
+//    public ManagedScene getCurrentScene() {
+//        return currentScene;
+//    }
+    public Scene getCurrentScene() {
+    	return currentScene;
     }
 
     // -------------------------------
@@ -89,9 +96,9 @@ public class SceneManager {
             case SCENE_SPLASH:
                 setScene(splashScene);
                 break;
-            case SCENE_MENU:
-                setScene(menuScene);
-                break;
+//            case SCENE_MENU:
+//                setScene(menuScene);
+//                break;
             case SCENE_GAME:
                 setScene(gameScene);
                 break;
@@ -105,39 +112,47 @@ public class SceneManager {
 
     // ============================ INIT SCENE (SPLASH) ================= //
     /* Initialize the splash scene */
-    public void onShowSplashScene(OnCreateSceneCallback pOnCreateSceneCallback) {
-        ResourceManager.loadSplashResources();
-        splashScene = new SplashScene();
-        splashScene.onShowScene();
-        currentScene = splashScene;
-        pOnCreateSceneCallback.onCreateSceneFinished(splashScene);
-    }
+//    public void onShowSplashScene(OnCreateSceneCallback pOnCreateSceneCallback) {
+//        ResourceManager.loadSplashResources();
+//        splashScene = new SplashScene();
+//        currentScene = splashScene;
+//        pOnCreateSceneCallback.onCreateSceneFinished(splashScene);
+//    }
 
     /* Dispose splash scene -- after load the menu */
-    private void onDisposeSplashScene() {
-        ResourceManager.unloadSplashResources();
-        splashScene.onDisposeScene();
-        splashScene = null;
-    }
+//    private void onDisposeSplashScene() {
+//        ResourceManager.unloadSplashResources();
+//        splashScene.onDisposeScene();
+//        splashScene = null;
+//    }
 
     // ============================ SCENE (MENU) ================= //
     /* Initialize the main menu */
-    public void creatMenuScene() {
+    public void onShowMenuScene() {
         ResourceManager.loadMenuResources();
-        menuScene = new MainMenuScene();
-        menuScene.onShowScene();
-        setScene(menuScene);
-//        disposeSplashScene();
+        
+        menuScene = new GameMenu(ResourceManager.getInstance().engine.getCamera());
+        menuScene.onPopulateMenu();
+      
+        getCurrentScene().setChildScene(menuScene, false, true, true);
+        currentSceneType = SceneType.SCENE_MENU;
     }
 
     // ============================ SCENE (GAME) ================= //
     /* Initialize the game scene */
     public void onShowGameScene(OnCreateSceneCallback pOnCreateSceneCallback) {
+    	/* Load Resources before createScene */
         ResourceManager.loadGameResources();
+        
         gameScene = new TableauScene();
-        gameScene.onShowScene();
-        currentScene = gameScene;
+        setScene(gameScene);
         pOnCreateSceneCallback.onCreateSceneFinished(gameScene);
+    }
+    
+    public void onShowGameScene() {
+    	menuScene.back();
+    	currentScene = gameScene;
+    	currentSceneType = SceneType.SCENE_GAME;
     }
 
 }

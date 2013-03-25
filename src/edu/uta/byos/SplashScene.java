@@ -15,22 +15,22 @@ public class SplashScene extends ManagedScene {
     private Sprite splash;
 
 	@Override
-	public void onShowScene() {
-	    splash = new Sprite(0, 0, ResourceManager.splashTextureRegion, vbom) {
-            @Override
-            protected void preDraw(GLState pGLState, Camera pCamera) {
-                super.preDraw(pGLState, pCamera);
-                /* Better quality */
-                pGLState.enableDither();
-            }
+	public void onCreateScene() {
+//	    splash = new Sprite(0, 0, ResourceManager.splashTextureRegion, ResourceManager.getInstance().vbom) {
+//            @Override
+//            protected void preDraw(GLState pGLState, Camera pCamera) {
+//                super.preDraw(pGLState, pCamera);
+//                /* Better quality */
+//                pGLState.enableDither();
+//            }
         };
 
         /* Set it in the middle of the screen */
-        splash.setScale(2.0f);
-        splash.setPosition( (ResourceManager.getInstance().cameraWidth - splash.getWidth()) * 0.5f , 
-        					(ResourceManager.getInstance().cameraHeight - splash.getHeight()) * 0.5f);
-        attachChild(splash);
-	}
+//        splash.setScale(2.0f);
+//        splash.setPosition( (ResourceManager.getInstance().cameraWidth - splash.getWidth()) * 0.5f , 
+//        					(ResourceManager.getInstance().cameraHeight - splash.getHeight()) * 0.5f);
+//        attachChild(splash);
+//	}
 
 	@Override
 	public void onBackKeyPressed() {

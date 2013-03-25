@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 public class LoadView extends Activity implements OnTouchListener {
 
-	// private GameView gameView;
 	private TextView touchToStart = null;
 	private ImageView logo = null;
 	private RelativeLayout startPage;
@@ -39,45 +38,43 @@ public class LoadView extends Activity implements OnTouchListener {
 		/*
 		 * AnimationListener settings
 		 */
-//		logoShow.setAnimationListener(new AnimationListener() {
-//
-//			@Override
-//			public void onAnimationStart(Animation animation) {
-//				// TODO Auto-generated method stub
-//
-//			}
-//
-//			@Override
-//			public void onAnimationRepeat(Animation animation) {
-//				// TODO Auto-generated method stub
-//
-//			}
-//
-//			@Override
-//			public void onAnimationEnd(Animation animation) {
-//				touchToStart = (TextView) findViewById(R.id.touch_to_start);
-//				touchToStart.setVisibility(View.VISIBLE);
-//				touchToStart.setAnimation(alpha);
-//			}
-//		});
+		logoShow.setAnimationListener(new AnimationListener() {
 
+			@Override
+			public void onAnimationStart(Animation animation) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				touchToStart = (TextView) findViewById(R.id.touch_to_start);
+				touchToStart.setVisibility(View.VISIBLE);
+				touchToStart.setAnimation(alpha);
+			}
+		});
 
 		logo = (ImageView) findViewById(R.id.logo);
-		logo.setImageResource(R.drawable.icon);
+		logo.setImageResource(R.drawable.logo);
 		logo.setAnimation(logoShow);
 
 	}
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
-//		Intent intent = new Intent();
-//        intent.setClass(LoadView.this, GameActivity.class);
-		Intent intent = new Intent(this, GameActivity.class);
-        startActivity(intent);
-        // Close load game view
-        finish();
+
+		Intent intent = new Intent(LoadView.this, GameActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+		startActivity(intent);
+		/* Close load game view */
+		finish();
 		return true;
 	}
-
 
 }

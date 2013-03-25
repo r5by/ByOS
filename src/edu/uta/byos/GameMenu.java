@@ -10,55 +10,42 @@ import org.andengine.entity.sprite.Sprite;
 import org.andengine.opengl.util.GLState;
 
 import edu.uta.byos.Managers.ResourceManager;
-import edu.uta.byos.Managers.SceneManager.SceneType;
 
-public class MainMenuScene extends ManagedScene implements IOnMenuItemClickListener {
+public class GameMenu extends MenuScene implements IOnMenuItemClickListener{
 
-    // -------------------------------
+	// -------------------------------
     // Fields
     // -------------------------------
 	private Sprite menuBackground;
     private static final int MENU_Y_GAP = 10;
     private static final int MENU_X_GAP = 30;
 
-    private MenuScene menuChildScene;
     private final int MENU_NEWGAME = 0;
     private final int MENU_HINT = 1;
     private final int MENU_DEAL = 2;
     private final int MENU_OPTIONS = 3;
     private final int MENU_EXIT = 4;
-
+    
+    // -------------------------------
+    // Constructor
+    // -------------------------------
+    public GameMenu(Camera pCamera) {
+    	super(pCamera);
+    }
+    
     // -------------------------------
     // Public Methods
     // -------------------------------
-
-	@Override
-	public void onCreateScene() {
-		showBackground();
-        showMenuChildScene();
-	}
-
-	@Override
-	public void onBackKeyPressed() {
-        System.exit(0);
-	}
-
-	@Override
-	public SceneType getSceneType() {
-		return SceneType.SCENE_MENU;
-	}
-
-	@Override
-	public void onDisposeScene() {
-		// TODO Auto-generated method stub
-
-	}
-
+    public void onPopulateMenu() {
+    	showBackground();
+    	showMenuChildScene();
+    }
+    
     // -------------------------------
     // Private Methods
     // -------------------------------
     private void showBackground() {
-        menuBackground = new Sprite(0, 0, ResourceManager.menuBackgroundTextureRegion, ResourceManager.getInstance().vbom) {
+        menuBackground = new Sprite(0, 0, ResourceManager.menuBackgroundTR, ResourceManager.getInstance().vbom) {
             @Override
             protected void preDraw(GLState pGLState, Camera pCamera) {
                 super.preDraw(pGLState, pCamera);
@@ -71,8 +58,7 @@ public class MainMenuScene extends ManagedScene implements IOnMenuItemClickListe
         }
 
     private void showMenuChildScene() {
-        menuChildScene = new MenuScene(ResourceManager.getInstance().engine.getCamera());
-        menuChildScene.setPosition( 0, 0);
+        setPosition( 0, 0);
 
         final IMenuItem newgameMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_NEWGAME, ResourceManager.newgameTiledTextureRegion, ResourceManager.getInstance().vbom), 1.2f, 1);
         final IMenuItem hintMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_HINT, ResourceManager.hintTiledTextureRegion, ResourceManager.getInstance().vbom), 1.2f, 1);
@@ -80,14 +66,14 @@ public class MainMenuScene extends ManagedScene implements IOnMenuItemClickListe
         final IMenuItem optionsMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_OPTIONS, ResourceManager.optionsTiledTextureRegion, ResourceManager.getInstance().vbom), 1.2f, 1);
         final IMenuItem exitMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_EXIT, ResourceManager.exitTiledTextureRegion, ResourceManager.getInstance().vbom), 1.2f, 1);
 
-        menuChildScene.addMenuItem(newgameMenuItem);
-        menuChildScene.addMenuItem(hintMenuItem);
-        menuChildScene.addMenuItem(dealMenuItem);
-        menuChildScene.addMenuItem(optionsMenuItem);
-        menuChildScene.addMenuItem(exitMenuItem);
+        addMenuItem(newgameMenuItem);
+        addMenuItem(hintMenuItem);
+        addMenuItem(dealMenuItem);
+        addMenuItem(optionsMenuItem);
+        addMenuItem(exitMenuItem);
 
-        menuChildScene.buildAnimations();
-        menuChildScene.setBackgroundEnabled(false);
+        buildAnimations();
+        setBackgroundEnabled(false);
 
         newgameMenuItem.setPosition(optionsMenuItem.getX(), optionsMenuItem.getY() - MENU_Y_GAP * 6f);
         hintMenuItem.setPosition(optionsMenuItem.getX() - MENU_X_GAP, optionsMenuItem.getY() - MENU_Y_GAP * 3f);
@@ -95,11 +81,10 @@ public class MainMenuScene extends ManagedScene implements IOnMenuItemClickListe
         optionsMenuItem.setPosition(optionsMenuItem.getX(), optionsMenuItem.getY() + MENU_Y_GAP );
         exitMenuItem.setPosition(optionsMenuItem.getX(), optionsMenuItem.getY() + MENU_Y_GAP * 3f);
 
-        menuChildScene.setOnMenuItemClickListener(this);
-
-       setChildScene(menuChildScene);
+        setOnMenuItemClickListener(this);
    }
-
+	
+    /* TODO: Define Menu click events */
 	@Override
 	public boolean onMenuItemClicked(MenuScene pMenuScene, IMenuItem pMenuItem,
 			float pMenuItemLocalX, float pMenuItemLocalY) {
