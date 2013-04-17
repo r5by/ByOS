@@ -81,7 +81,7 @@ public class GameActivity extends BaseGameActivity {
 
             /* Create game scene at the beginning of the game */
             SceneManager.getInstance().onShowGameScene(pOnCreateSceneCallback);
-
+       
 		}
 
 		@Override

@@ -2,14 +2,16 @@ package edu.uta.byos.runtime;
 
 import java.util.ArrayList;
 
+import edu.uta.byos.runtime.Card;
+
 /**
-* ********** [ ByOS ] ***********
+* **************************** [ ByOS ] *****************************
 * @Description A solitaire Game
 * @class    | Anchor
 *           | Designed for dealing with cards in piles on tableau
 * @authors ruby_
 * @version 1.0
-* ***************************************
+* *******************************************************************
 */
 
 
@@ -53,9 +55,9 @@ public abstract class Anchor extends ArrayList<Card> {
 
     /* Append pile of cards to current pile */
     protected void appendCards(ArrayList<Card> pArrayList) {
-        for (int i = 0; i < pArrayList.size() ; i++) {
-            appendCard((Card) pArrayList.get(i));
-        }
+    	for (int i = 0; i < pArrayList.size(); i++) {
+			appendCard(pArrayList.get(i));
+		}
     }
 
     // -------------------------------
@@ -68,10 +70,10 @@ public abstract class Anchor extends ArrayList<Card> {
     }
 
     /* Return last card (in the pile) */
-    protected Card getLastCard() {
-    	if(size() > 0)
-    		return (Card) this.get(this.size() - 1);
-    	return null;
+    public Card getLastCard() {
+    	if (size() > 0)
+			return (Card) this.get(this.size() - 1);
+		return null;
     }
 
     /* Remove card(s) from the pile */

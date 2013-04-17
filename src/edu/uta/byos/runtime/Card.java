@@ -1,45 +1,58 @@
 package edu.uta.byos.runtime;
 
+import org.andengine.entity.sprite.Sprite;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
-public class Card extends RegionChangableSprite {
+import edu.uta.byos.runtime.CardList;
+
+/**
+ * **************************** [ ByOS ] *****************************
+ * 
+ * @Description A solitaire game
+ * @Class | Card | A <code>Card</code> Object represents a playing card
+ * @has mCardIndex: [suit, value] - pair
+ * @has texture: original & cardBack
+ * @authors ruby_
+ * @version 1.0 *******************************************************
+ */
+
+public class Card extends Sprite {
 
     // -------------------------------
     // Fields
     // -------------------------------
-    protected boolean isFace;
-    protected int mCardColor;
-    protected int mCardValue;
-    protected ITextureRegion mCardOriginalTR;
-    protected ITextureRegion mCardBackTR;
-    
+    private boolean isFace;
+    private CardList mCardIndex;
+    private ITextureRegion mCardOriginalTR;
+    private ITextureRegion mCardBackTR;
+
     public static final int CARD_WIDTH = 78;
     public static final int CARD_HEIGHT = 106;
+
 
     // -------------------------------
     // Constructor
     // -------------------------------
-	public Card(float pX, float pY, ITextureRegion pTextureRegion,
+    public Card(float pX, float pY, final CardList pCardIndex,
+			final ITextureRegion pTextureRegion,
 			VertexBufferObjectManager pVertexBufferObjectManager) {
-		super(pX, pY, CARD_WIDTH, CARD_HEIGHT, pTextureRegion, pVertexBufferObjectManager);
-        this.mCardBackTR = pTextureRegion;
+		super(pX, pY, CARD_WIDTH, CARD_HEIGHT, pTextureRegion,
+				pVertexBufferObjectManager);
+		this.mCardBackTR = pTextureRegion;
+		this.mCardIndex = pCardIndex;
 	}
 
     // -------------------------------
     // setters & getters
     // -------------------------------
 
-    public int getmCardColor() {
-        return this.mCardColor;
-    }
+    public CardList getCard() {
+		return this.mCardIndex;
+	}
 
     public ITextureRegion getmCardOriginalTextureRegion() {
         return this.mCardOriginalTR;
-    }
-
-    public int getmCardValue() {
-        return this.mCardValue;
     }
 
     public boolean isFace() {
@@ -50,16 +63,8 @@ public class Card extends RegionChangableSprite {
         this.isFace = pIsFace;
     }
 
-    public void setmCardColor(int pmCardColor) {
-        this.mCardColor = pmCardColor;
-    }
-
     public void setmCardOriginalTextureRegion(ITextureRegion pTextureRegion) {
         this.mCardOriginalTR = pTextureRegion;
-    }
-
-    public void setmCardValue(int pCardValue) {
-        this.mCardValue = pCardValue;
     }
 
     // -------------------------------
@@ -73,15 +78,32 @@ public class Card extends RegionChangableSprite {
         setColor(1.0f, 1.0f, 1.0f);
     }
 
-    protected void onTurnOff() {
-        this.isFace = false;
-        setTextureRegion(this.mCardBackTR);
-    }
+    public void onTurnOff() {
+		this.isFace = false;
+		this.setTextureRegion(mCardBackTR);
+	}
 
-    protected void onTurnOn() {
-        this.isFace = true;
-        setTextureRegion(this.mCardOriginalTR);
-    }
-
+    public void onTurnOn() {
+		this.isFace = true;
+		this.setTextureRegion(this.mCardOriginalTR);
+	}
+    
+ // -------------------------------
+ 	// Overrides
+ 	// -------------------------------
+ 	@Override
+ 	public boolean onAreaTouched(
+ 			org.andengine.input.touch.TouchEvent pSceneTouchEvent,
+ 			float pTouchAreaLocalX, float pTouchAreaLocalY) {
+ 		if (pSceneTouchEvent.isActionDown()) {
+ 			this.setFace(!isFace);
+ 			if (isFace())
+ 				onTurnOn();
+ 			else
+ 				onTurnOff();
+ 			return true;
+ 		} else
+ 			return false;
+ 	};
 
 }

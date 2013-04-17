@@ -11,6 +11,17 @@ import org.andengine.opengl.util.GLState;
 
 import edu.uta.byos.Managers.ResourceManager;
 
+/**
+* **************************** [ ByOS ] *****************************
+* @Description A solitaire Game
+* @class    | GameMenu
+*           | This class is the game menu which can be called during
+*           | game play
+* @authors ruby_
+* @version 1.0
+* *******************************************************************
+*/
+
 public class GameMenu extends MenuScene implements IOnMenuItemClickListener{
 
 	// -------------------------------

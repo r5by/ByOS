@@ -8,10 +8,11 @@ import edu.uta.byos.GameMenu;
 import edu.uta.byos.ManagedScene;
 import edu.uta.byos.TableauScene;
 //import edu.uta.byos.MainMenuScene;
-//import edu.uta.byos.MainMenuScene;
 //import edu.uta.byos.SplashScene;
+
+
 /**
-* ********** [ ByOS ] ***********
+* ******************************** [ ByOS ] ***********************************
 * @Description A solitaire game
 * @Class    | SceneManager
 *           | Responsible for switching between scenes and keeping track of the current
@@ -20,7 +21,7 @@ import edu.uta.byos.TableauScene;
 *           | Enum: Shows the scene type
 * @authors ruby_
 * @version 1.0
-* ***************************************
+* ******************************************************************************
 */
 
 public class SceneManager extends Object {
@@ -75,6 +76,7 @@ public class SceneManager extends Object {
 //    public ManagedScene getCurrentScene() {
 //        return currentScene;
 //    }
+    
     public Scene getCurrentScene() {
     	return currentScene;
     }
@@ -144,7 +146,13 @@ public class SceneManager extends Object {
     	/* Load Resources before createScene */
         ResourceManager.loadGameResources();
         
+        /* Get cards ready */
+        GameManager.getInstance().allCardTurnOff();
+        GameManager.getInstance().initAllCards(4);
+        GameManager.getInstance().initReadyCard();
+        
         gameScene = new TableauScene();
+        gameScene.sortChildren();
         setScene(gameScene);
         pOnCreateSceneCallback.onCreateSceneFinished(gameScene);
     }

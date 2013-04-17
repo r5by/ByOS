@@ -9,7 +9,13 @@ import edu.uta.byos.Managers.ResourceManager;
 import edu.uta.byos.Managers.SceneManager.SceneType;
 
 /**
-* @author ruby_ - CSE_UTA
+* **************************** [ ByOS ] *****************************
+* @Description A solitaire Game
+* @class    | ManagedScene
+*           | An abstract class for all types of scene to extent
+* @authors ruby_
+* @version 1.0
+* *******************************************************************
 */
 
 public abstract class ManagedScene extends Scene {

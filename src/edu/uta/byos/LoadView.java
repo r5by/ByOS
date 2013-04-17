@@ -15,6 +15,17 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+/**
+* **************************** [ ByOS ] *****************************
+* @Description A solitaire Game
+* @class    | LoadView
+*           | This activity starts before game activity to show our
+*           | logo
+* @authors ruby_
+* @version 1.0
+* *******************************************************************
+*/
+
 public class LoadView extends Activity implements OnTouchListener {
 
 	private TextView touchToStart = null;
