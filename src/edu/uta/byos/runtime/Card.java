@@ -1,10 +1,12 @@
 package edu.uta.byos.runtime;
 
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
-import edu.uta.byos.runtime.CardList;
+import edu.uta.byos.Managers.GameManager;
+import edu.uta.byos.Managers.SceneManager;
 
 /**
  * **************************** [ ByOS ] *****************************
@@ -14,8 +16,9 @@ import edu.uta.byos.runtime.CardList;
  * @has mCardIndex: [suit, value] - pair
  * @has texture: original & cardBack
  * @authors ruby_
- * @version 1.0 *******************************************************
- */
+ * @version 3.8
+ * @since v-2.0
+ * *******************************************************************/
 
 public class Card extends Sprite {
 
@@ -23,6 +26,8 @@ public class Card extends Sprite {
     // Fields
     // -------------------------------
     private boolean isFace;
+    private boolean isGrabbed;
+    private boolean isClicked;
     private CardList mCardIndex;
     private ITextureRegion mCardOriginalTR;
     private ITextureRegion mCardBackTR;
@@ -50,6 +55,10 @@ public class Card extends Sprite {
     public CardList getCard() {
 		return this.mCardIndex;
 	}
+    
+    public boolean isClicked() {
+    	return this.isClicked;
+    }
 
     public ITextureRegion getmCardOriginalTextureRegion() {
         return this.mCardOriginalTR;
@@ -57,6 +66,10 @@ public class Card extends Sprite {
 
     public boolean isFace() {
         return this.isFace;
+    }
+    
+    public boolean isGrabbed() {
+    	return this.isGrabbed;
     }
 
     public void setFace(boolean pIsFace) {
@@ -71,39 +84,68 @@ public class Card extends Sprite {
     // Methods
     // -------------------------------
     public void clicked() {
-        setColor(0.5f, 0.5f, 0.5f);
+    	if(!isClicked()) {
+    		setColor(0.5f, 0.5f, 0.5f);
+    		isClicked = true;
+    	}
     }
 
     public void release() {
-        setColor(1.0f, 1.0f, 1.0f);
+    	if(isClicked()) {
+    		setColor(1.0f, 1.0f, 1.0f);
+    		isClicked = false;
+    	}
     }
 
     public void onTurnOff() {
-		this.isFace = false;
-		this.setTextureRegion(mCardBackTR);
+    	if(isFace() == true) {
+    		this.isFace = false;
+    		this.setTextureRegion(mCardBackTR);
+    	}
 	}
 
     public void onTurnOn() {
-		this.isFace = true;
-		this.setTextureRegion(this.mCardOriginalTR);
+    	if(isFace() == false) {
+    		this.isFace = true;
+    		this.setTextureRegion(this.mCardOriginalTR);
+    	}
 	}
     
- // -------------------------------
+    // -------------------------------
  	// Overrides
  	// -------------------------------
  	@Override
  	public boolean onAreaTouched(
  			org.andengine.input.touch.TouchEvent pSceneTouchEvent,
  			float pTouchAreaLocalX, float pTouchAreaLocalY) {
- 		if (pSceneTouchEvent.isActionDown()) {
- 			this.setFace(!isFace);
- 			if (isFace())
- 				onTurnOn();
- 			else
- 				onTurnOff();
- 			return true;
- 		} else
- 			return false;
+ 		int originalZIndex = this.getZIndex();
+ 		
+ 		switch(pSceneTouchEvent.getAction()) {
+ 		 case TouchEvent.ACTION_MOVE:
+         case TouchEvent.ACTION_DOWN:{
+        	this.isGrabbed = true;
+  			GameManager.SELECTEDCARD = this;
+  			this.release();	
+  			GameManager.SELECTEDCARD.setZIndex(originalZIndex + 1);
+  			SceneManager.getInstance().getCurrentScene().sortChildren();
+  			GameManager.SELECTEDCARD.setPosition(pSceneTouchEvent.getX() - GameManager.SELECTEDCARD.getWidth() * 0.5f, 
+ 				pSceneTouchEvent.getY() - GameManager.SELECTEDCARD.getHeight() * 0.5f);
+             return true; 
+         }
+         case TouchEvent.ACTION_UP:{
+        	GameManager.SELECTEDCARD.isGrabbed = false;
+            return true; 
+         }
+         case TouchEvent.ACTION_CANCEL:{
+             // If the event is somehow canceled - e.g. the finger leaves the display
+             return true; 
+         }
+         default:{
+             // none of the above
+             return false;
+         }
+ 		}
+ 		 		
  	};
 
 }

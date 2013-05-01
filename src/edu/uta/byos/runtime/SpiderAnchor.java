@@ -13,7 +13,8 @@ import edu.uta.byos.Managers.GameManager;
 * @Class    |SpiderAnchor
 *           | A class implements Anchor that apply spider solitaire rule
 * @authors ruby_
-* @version 1.0
+* @version 3.8
+* @Since v-3.0
 * **************************************************************************
 */
 
@@ -38,11 +39,27 @@ public class SpiderAnchor extends Anchor {
 		super.appendCard(pCard);
 		arrangeAnchor();
     }
+    
+    /* Remove card & cards */
+    @Override
+    public void removeCard(Card pCard) {
+    	super.removeCard(pCard);
+    	
+//    	this.getLastCard().onTurnOn();
+    	arrangeAnchor();
+    };
+    
+    @Override
+    public void removeCards(java.util.ArrayList<Card> pArrayList) {
+    	super.removeCards(pArrayList);
+    	arrangeAnchor();
+    };
 
-    /* 
-     * Arrange anchor so that no appended cards exceeds the tableau's boarder 
+    /*
+     * Arrange anchor so that no appended cards exceeds the tableau's boarder
      */
     public void arrangeAnchor() {
+
     	if (this.size() > 0 && this.getFirstFaceCardIndex() != -1) {
 			/* Adjust the face up cards' spacing */
 			int firstFaceUpCardIndex = getFirstFaceCardIndex();
@@ -74,34 +91,93 @@ public class SpiderAnchor extends Anchor {
 		}
     }
 
+    /*
+     * Get the first card in the spiderAnchor that can be moved
+     */
 	@Override
-	protected Card getCanMoveCard() {
-		// TODO Auto-generated method stub
-		return null;
+	public Card getCanMoveCard() {
+		if(size() == 1)
+			return get(0);
+		if(size() > 1) {
+			int i = size() -1;
+			while(i > getFirstFaceCardIndex()) {
+				Card localCard = get(i);
+				if( get(i-1).getCard().getValue().compareTo(localCard.getCard().getValue()) == 1 )
+					i--;
+				else
+					break;
+			}
+			return get(i);
+		}
+		else
+			return null;
 	}
 
+	/*
+     * Get the first card (index) in the spiderAnchor that can be moved 
+     */
 	@Override
 	protected int getCanMoveCardIndex() {
-		// TODO Auto-generated method stub
-		return 0;
+		if(size() == 1)
+			return 0;
+		if(size() > 1) {
+			int i = size() -1;
+			while(i > getFirstFaceCardIndex()) {
+				Card localCard = get(i);
+				if( get(i-1).getCard().getValue().compareTo(localCard.getCard().getValue()) == 1)
+					i--;
+				else
+					break;
+			}
+			return i;
+		}
+		else
+			return 0;
 	}
 
+	/*
+	 * Get arraylist<card> that represents cards under passed parameter (if exists)
+	 * Used along with getCanMoveCard as:
+	 * 		getCanMoveCards(getCanMoveCard()) -> to return list of cards that can be moved
+	 */
 	@Override
 	protected ArrayList<Card> getCanMoveCards(Card pCard) {
-		// TODO Auto-generated method stub
-		return null;
+		if(getCardIndex(pCard) >= 0) {
+			ArrayList<Card> localCards = new ArrayList<Card>();
+			for(int i = getCardIndex(pCard); i < size(); i++) {
+				localCards.add(get(i));
+			}
+			return localCards;
+		} else
+			return null;
+	}
+	
+	public ArrayList<Card> getCanMoveCards() {
+		return this.getCanMoveCards(this.getCanMoveCard());
 	}
 
+	/*
+	 * Decide whether passed card can be appended to current anchor
+	 */
 	@Override
-	protected boolean isCanAppendCard(Card pCard) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isCanAppendCard(Card pCard) {
+       if(size() > 0 && getLastCard().getCard().getValue().ordinal() == (pCard.getCard().getValue().ordinal() + 1) ) 
+    	   return true;
+       return false;
 	}
 
+	/*
+	 * Decide whether passed-in card can be moved in the anchor
+	 */
 	@Override
 	public boolean isCanMove(Card pCard) {
-		// TODO Auto-generated method stub
-		return false;
+		ArrayList<Card> localCards = new ArrayList<Card>();
+		localCards = getCanMoveCards(getCanMoveCard());
+		for(int i = 0; i < localCards.size(); i++) {
+			if(pCard == localCards.get(i))
+				return true;
+		}
+        return false;
 	}
 
 	@Override

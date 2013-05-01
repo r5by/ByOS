@@ -15,6 +15,7 @@ import edu.uta.byos.Managers.ResourceManager;
 import edu.uta.byos.Managers.SceneManager;
 import edu.uta.byos.Managers.SceneManager.SceneType;
 import edu.uta.byos.runtime.Card;
+import edu.uta.byos.runtime.SpiderAnchor;
 
 public class TableauScene extends ManagedScene {
 
@@ -23,7 +24,7 @@ public class TableauScene extends ManagedScene {
     // -------------------------------
     private Sprite mBackgroundSprite;
     private static Sprite mDeckSprite;
-    private Sprite mFaceSprite;
+    public static Sprite mFaceSprite;
     private HUD gameHUD;
     private Text deckCntText;
 
@@ -99,9 +100,18 @@ public class TableauScene extends ManagedScene {
 
     private void createTableauChild() {
     	/* TODO: attach cards onto tableau */
-        mFaceSprite = new Sprite(0, 0, ResourceManager.mFaceTR, ResourceManager.getInstance().vbom);
-        mFaceSprite.registerEntityModifier(new MoveModifier(30, 0, ResourceManager.getInstance().cameraWidth - mFaceSprite.getWidth(),
-        		0, ResourceManager.getInstance().cameraHeight - mFaceSprite.getHeight()));
+        mFaceSprite = new Sprite(0, 0, ResourceManager.mFaceTR, ResourceManager.getInstance().vbom) {
+        	@Override
+        	public boolean onAreaTouched(TouchEvent pSceneTouchEvent,
+        			float pTouchAreaLocalX, float pTouchAreaLocalY) {
+        		// TODO Auto-generated method stub
+        		this.setPosition(pSceneTouchEvent.getX() - this.getWidth() * 0.5f, 
+        						pSceneTouchEvent.getY() - this.getHeight() * 0.5f);
+        		return true;
+        	}
+        };
+        mFaceSprite.registerEntityModifier(new MoveModifier(30, 0, (ResourceManager.getInstance().cameraWidth - mFaceSprite.getWidth()) * 0.5f,
+        		0, (ResourceManager.getInstance().cameraHeight - mFaceSprite.getHeight() * 0.5f)));
 
         /* Vacant cards on tableau */
         /* Arrangement of vacant cards (under each anchor) */
@@ -163,11 +173,17 @@ public class TableauScene extends ManagedScene {
 		
 		
 		attachChild(mDeckSprite);
-		attachChild(mFaceSprite);
+//		attachChild(mFaceSprite);
 
 		registerTouchArea(mDeckSprite);
+		
+		/* Set-up cards that can be moved touched & move */
+		 for(int i = 0; i < GameManager.mAnchorList.size(); i++) {
+	        	for( Card card :((SpiderAnchor)GameManager.mAnchorList.valueAt(i)).getCanMoveCards())
+	        		registerTouchArea(card);
+	        }
+		
 		setTouchAreaBindingOnActionDownEnabled(true);
     }
-
 
 }

@@ -10,7 +10,8 @@ import edu.uta.byos.runtime.Card;
 * @class    | Anchor
 *           | Designed for dealing with cards in piles on tableau
 * @authors ruby_
-* @version 1.0
+* @version 3.8
+* @since v-2.0
 * *******************************************************************
 */
 
@@ -50,7 +51,7 @@ public abstract class Anchor extends ArrayList<Card> {
     /* Append card to current pile */
     protected void appendCard(Card pCard) {
         add(pCard);
-        pCard.setZIndex(size() - 1);
+        pCard.setZIndex(this.size() - 1);
     }
 
     /* Append pile of cards to current pile */
@@ -59,6 +60,7 @@ public abstract class Anchor extends ArrayList<Card> {
 			appendCard(pArrayList.get(i));
 		}
     }
+    
 
     // -------------------------------
     // Methods
@@ -77,11 +79,11 @@ public abstract class Anchor extends ArrayList<Card> {
     }
 
     /* Remove card(s) from the pile */
-    protected void removeCard(Card pCard) {
+    public void removeCard(Card pCard) {
         remove(pCard);
     }
 
-    protected void removeCards(ArrayList<Card> pArrayList) {
+    public void removeCards(ArrayList<Card> pArrayList) {
         removeAll(pArrayList);
     }
 

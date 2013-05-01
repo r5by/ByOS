@@ -26,7 +26,8 @@ import edu.uta.byos.runtime.SpiderAnchor;
 *           | certain data involved in game
 *           | Pattern: Singleton
 * @authors ruby_
-* @version 1.0
+* @version 3.8
+* @since v- 2.0
 * ***************************************
 */
 
@@ -58,6 +59,8 @@ public class GameManager {
 	private ArrayList<Card> fourSuitCards = new ArrayList(); //four color suits
 	private ArrayList<Card> mAllCards = new ArrayList<Card>(); //Used to init suits
 
+	public static Card SELECTEDCARD = null;
+	public static ArrayList<Card> mMovingCards;
 	public static EnumMap<CardList, Card> mCardMap;
 	public static SparseArray<Anchor> mAnchorList;
 	public static SparseArray<ArrayList<Card>> mDeckList;
